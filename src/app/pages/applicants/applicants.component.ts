@@ -256,7 +256,7 @@ import { RouterModule } from '@angular/router';
     }
       .action-btn.reschedule {
       background-color: #e6e6e6;
-      color: #616161;
+      color:rgb(153, 126, 126);
     }
     
   `]
