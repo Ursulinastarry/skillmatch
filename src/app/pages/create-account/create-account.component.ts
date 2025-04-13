@@ -59,6 +59,39 @@ import { RouterModule } from '@angular/router';
               placeholder="Confirm your password">
           
           </div>
+           <div class="role-selection">
+                <label>Login as:</label>
+                <div class="role-options">
+                  <div class="role-option">
+                    <input
+                      type="radio"
+                      id="roleJobSeeker"
+                      name="userRole"
+                      value="JobSeeker"
+                      checked
+                    />
+                    <label for="roleJobSeeker">JobSeeker</label>
+                  </div>
+                  <div class="role-option">
+                    <input
+                      type="radio"
+                      id="roleEmployer"
+                      name="userRole"
+                      value="Employer"
+                    />
+                    <label for="roleEmployer">Employer</label>
+                  </div>
+                  <div class="role-option">
+                    <input
+                      type="radio"
+                      id="roleAdmin"
+                      name="userRole"
+                      value="admin"
+                    />
+                    <label for="roleAdmin">Admin</label>
+                  </div>
+                </div>
+              </div>
 
           <div class="terms-container">
             <input type="checkbox" id="terms" formControlName="terms">
@@ -126,6 +159,11 @@ import { RouterModule } from '@angular/router';
     .google-text, .apple-text {
       font-weight: bold;
       margin-left: 5px;
+    }
+   .role-options{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
     }
 
     .separator {
