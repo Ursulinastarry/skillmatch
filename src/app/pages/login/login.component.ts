@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -10,8 +10,6 @@ import { RouterModule } from '@angular/router';
   template: `
     <div class="login-container">
       <div class="auth-card">
-       
-
         <div class="social-login">
           <button class="social-btn google-btn">
             Sign in with <span class="google-text">Google</span>
@@ -34,7 +32,10 @@ import { RouterModule } from '@angular/router';
               formControlName="email" 
               class="form-control"
               placeholder="Enter your email">
-          
+            <div *ngIf="submitted && f['email'].errors" class="error-message">
+              <div *ngIf="f['email'].errors['required']">Email is required</div>
+              <div *ngIf="f['email'].errors['email']">Please enter a valid email</div>
+            </div>
           </div>
 
           <div class="form-group">
@@ -45,7 +46,25 @@ import { RouterModule } from '@angular/router';
               formControlName="password" 
               class="form-control"
               placeholder="Enter your password">
-           
+            <div *ngIf="submitted && f['password'].errors" class="error-message">
+              <div *ngIf="f['password'].errors['required']">Password is required</div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="userRole">Login as</label>
+            <select 
+              id="userRole" 
+              formControlName="userRole" 
+              class="form-control">
+              <option value="">Select your role</option>
+              <option value="admin">Admin</option>
+              <option value="jobseeker">Job Seeker</option>
+              <option value="employer">Employer</option>
+            </select>
+            <div *ngIf="submitted && f['userRole'].errors" class="error-message">
+              <div *ngIf="f['userRole'].errors['required']">Role selection is required</div>
+            </div>
           </div>
 
           <div class="form-options">
@@ -230,10 +249,14 @@ export class LoginComponent {
   loginForm: FormGroup;
   submitted = false;
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(
+    private formBuilder: FormBuilder,
+    private router: Router
+  ) {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
+      userRole: ['', [Validators.required]],
       remember: [false]
     });
   }
@@ -247,7 +270,28 @@ export class LoginComponent {
       return;
     }
 
-    // Here you would handle the login logic
-    console.log('Login details', this.loginForm.value);
+    // Assume authentication is successful for now
+    // In a real application, you would verify credentials with your backend service
+    
+    const userRole = this.loginForm.get('userRole')?.value;
+    
+    // Navigate based on user role
+    switch(userRole) {
+      case 'admin':
+        this.router.navigate(['/administrators']);
+        break;
+      case 'jobseeker':
+        this.router.navigate(['/job-seekers']);
+        break;
+      case 'employer':
+        this.router.navigate(['/employers']);
+        break;
+      default:
+        // If somehow no role is selected despite validation
+        console.error('No role selected');
+        break;
+    }
+
+    console.log('Login attempted with:', this.loginForm.value);
   }
 }

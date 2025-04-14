@@ -23,10 +23,21 @@ import { RouterModule } from '@angular/router';
             <p>Browse thousands of opportunities</p>
             <a routerLink="/post-find-job" class="btn">Search Now</a>
           </div>
+          
           <div class="search-option">
             <h3>Find Candidates</h3>
             <p>Discover top talent for your company</p>
             <a routerLink="/applicants" class="btn">Search Now</a>
+          </div>
+          <div class="search-option">
+            <h3>Log in</h3>
+            <p>Login to see your dashboard</p>
+            <a routerLink="/login" class="btn">Login</a>
+          </div>
+          <div class="search-option">
+            <h3>Sign up</h3>
+            <p>Sign up with us for better experience</p>
+            <a routerLink="/create-account" class="btn">Sign up</a>
           </div>
         </div>
       </div>

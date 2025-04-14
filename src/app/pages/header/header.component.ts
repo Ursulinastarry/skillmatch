@@ -16,13 +16,8 @@ import { RouterModule } from '@angular/router';
       <nav class="nav">
         <ul class="nav-list">
           <li><a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a></li>
-          <li><a routerLink="/login" routerLinkActive="active">Log In</a></li>
-          <li><a routerLink="/create-account" routerLinkActive="active">Create Account</a></li>
-          <li><a routerLink="/employers" routerLinkActive="active">Employers</a></li>
-          <li><a routerLink="/job-seekers" routerLinkActive="active">Job Seekers</a></li>
           <li><a routerLink="/about" routerLinkActive="active">About</a></li>
           <li><a routerLink="/contact" routerLinkActive="active">Contact Us</a></li>
-          <li><a routerLink="/administrators" routerLinkActive="active">Admin Panel</a></li>
         </ul>
       </nav>
       <button class="menu-toggle" (click)="toggleMenu()">
@@ -32,13 +27,8 @@ import { RouterModule } from '@angular/router';
     <div class="mobile-menu" [class.active]="isMenuOpen">
       <ul class="mobile-nav-list">
         <li><a routerLink="/" (click)="closeMenu()">Home</a></li>
-        <li><a routerLink="/login" (click)="closeMenu()">Log In</a></li>
-        <li><a routerLink="/create-account" (click)="closeMenu()">Create Account</a></li>
-        <li><a routerLink="/employers" (click)="closeMenu()">Employers</a></li>
-        <li><a routerLink="/job-seekers" (click)="closeMenu()">Job Seekers</a></li>
         <li><a routerLink="/about" (click)="closeMenu()">About</a></li>
         <li><a routerLink="/contact" (click)="closeMenu()">Contact Us</a></li>
-        <li><a routerLink="/administrators" (click)="closeMenu()">Admin Panel</a></li>
       </ul>
     </div>
   `,

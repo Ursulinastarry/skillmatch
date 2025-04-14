@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-create-account',
   standalone: true,
@@ -60,7 +60,7 @@ import { RouterModule } from '@angular/router';
           
           </div>
            <div class="role-selection">
-                <label>Login as:</label>
+                <label>Sign up as:</label>
                 <div class="role-options">
                   <div class="role-option">
                     <input
@@ -99,7 +99,7 @@ import { RouterModule } from '@angular/router';
            
           </div>
 
-          <button type="submit" class="register-btn">Register</button>
+          <button type="submit" (click)="onSubmit()" class="register-btn">Register</button>
         </form>
 
         <div class="login-link">
@@ -272,7 +272,7 @@ export class CreateAccountComponent {
   registerForm: FormGroup;
   submitted = false;
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(private formBuilder: FormBuilder,private router: Router) {
     this.registerForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
@@ -305,8 +305,10 @@ export class CreateAccountComponent {
   onSubmit() {
     this.submitted = true;
 
-    if (this.registerForm.invalid) {
+    if (this.registerForm.valid) {
+      this.router.navigate(['/login']);
       return;
+
     }
 
     // Here you would handle the registration logic
