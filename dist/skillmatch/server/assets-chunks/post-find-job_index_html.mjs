@@ -12,4 +12,4 @@ export default `<!DOCTYPE html><html lang="en" data-beasties-container><head>
 <link rel="modulepreload" href="chunk-IPYYUQ53.js">
 
 
-<script id="ng-state" type="application/json">{"__nghData__":[{},{"t":{"9":"t0","10":"t1"},"c":{"9":[],"10":[{"i":"t1","r":1}]}},{"c":{"2":[{"i":"c4034244783","r":1}]}}]}</script></body></html>`;
+<script id="ng-state" type="application/json">{"__nghData__":[{},{"t":{"9":"t3","10":"t4"},"c":{"9":[],"10":[{"i":"t4","r":1}]}},{"c":{"2":[{"i":"c4034244783","r":1}]}}]}</script></body></html>`;
