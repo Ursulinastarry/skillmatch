@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-
+import { AuthService } from '../../services/auth.service'; // Update this path if needed
+import { LoginResponse } from '../../services/auth.service';
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -75,6 +76,10 @@ import { Router, RouterModule } from '@angular/router';
             <a routerLink="/forgot-password" class="forgot-link">Forgot password?</a>
           </div>
 
+          <div *ngIf="loginError" class="error-message">
+            {{ loginError }}
+          </div>
+
           <button type="submit" class="sign-in-btn">Sign In</button>
         </form>
 
@@ -97,15 +102,6 @@ import { Router, RouterModule } from '@angular/router';
       border-radius: 8px;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
       padding: 30px;
-    }
-
-    .logo-container {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .logo {
-      height: 40px;
     }
 
     .social-login {
@@ -245,13 +241,16 @@ import { Router, RouterModule } from '@angular/router';
     }
   `]
 })
+
 export class LoginComponent {
   loginForm: FormGroup;
   submitted = false;
+  loginError = '';
 
   constructor(
     private formBuilder: FormBuilder,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
@@ -261,37 +260,65 @@ export class LoginComponent {
     });
   }
 
-  get f() { return this.loginForm.controls; }
-
+  get f() {
+    return this.loginForm.controls;
+  }
+  
   onSubmit() {
     this.submitted = true;
-
+    console.log('Form submitted:', this.loginForm.value); // Log form values when the form is submitted
+    
     if (this.loginForm.invalid) {
+      console.log('Form is invalid');
       return;
     }
 
-    // Assume authentication is successful for now
-    // In a real application, you would verify credentials with your backend service
-    
-    const userRole = this.loginForm.get('userRole')?.value;
-    
-    // Navigate based on user role
-    switch(userRole) {
-      case 'admin':
-        this.router.navigate(['/administrators']);
-        break;
-      case 'jobseeker':
-        this.router.navigate(['/job-seekers']);
-        break;
-      case 'employer':
-        this.router.navigate(['/employers']);
-        break;
-      default:
-        // If somehow no role is selected despite validation
-        console.error('No role selected');
-        break;
-    }
+    const formValue = this.loginForm.value;
+    const roleId = this.authService.getRoleIdByName(formValue.userRole); // role name → role id
 
-    console.log('Login attempted with:', this.loginForm.value);
+    console.log('Role ID retrieved for user role:', formValue.userRole, 'Role ID:', roleId);
+
+    const loginPayload = {
+      email: formValue.email,
+      password: formValue.password,
+      role_id: roleId
+    };
+
+    console.log('Login payload:', loginPayload); // Log the login payload before making the request
+
+    this.authService.login(formValue.email, formValue.password, formValue.userRole).subscribe({
+      next: (response) => {
+        const userId = response?.user?.id;
+        const token = response?.accessToken;
+      
+        if (!userId || !token) {
+          console.error('Login response missing userId or token', response);
+          return;
+        }
+      
+       
+      
+        console.log('Login successful ✨');
+      
+        switch (formValue.userRole) {
+          case 'admin':
+            this.router.navigate(['/administrators']);
+            break;
+          case 'jobseeker':
+            this.router.navigate(['/job-seekers']);
+            break;
+          case 'employer':
+            this.router.navigate(['/employers']);
+            break;
+          default:
+            this.router.navigate(['/']);
+            break;
+        }
+      },
+      error: (err) => {
+        console.error('Login failed:', err); // Log error when login fails
+        this.loginError = 'Login failed. Please check your credentials and try again.'; // Set error message
+      }
+    });
   }
 }

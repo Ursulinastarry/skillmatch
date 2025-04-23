@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { ManageUsersComponent } from './pages/manage-users/manage-users.component';
 import { SystemPerformanceLogsComponent } from './pages/system-performance-logs/system-performance-logs.component';
+import { AuthGuard } from './core/guards/auth.guard';
 export const routes: Routes = [
   { 
     path: '', 
@@ -9,6 +10,8 @@ export const routes: Routes = [
   { 
     path: 'login', 
     loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent) 
+    
+
   },
   { 
     path: 'create-account', 
@@ -16,15 +19,21 @@ export const routes: Routes = [
   },
   { 
     path: 'employers', 
-    loadComponent: () => import('./pages/employers/employers.component').then(m => m.EmployersComponent) 
+    loadComponent: () => import('./pages/employers/employers.component').then(m => m.EmployersComponent) ,
+    
+    data: { roles: ['employer'] }
   },
   { 
     path: 'job-seekers', 
-    loadComponent: () => import('./pages/job-seekers/job-seekers.component').then(m => m.JobSeekersComponent) 
+    loadComponent: () => import('./pages/job-seekers/job-seekers.component').then(m => m.JobSeekersComponent),
+    
+    data: { roles: ['jobseeker'] } 
   },
   { 
     path: 'administrators', 
-    loadComponent: () => import('./pages/administrators/administrators.component').then(m => m.AdministratorsComponent) 
+    loadComponent: () => import('./pages/administrators/administrators.component').then(m => m.AdministratorsComponent),
+    
+  data: { roles: ['admin'] } 
   },
   { 
     path: 'about', 

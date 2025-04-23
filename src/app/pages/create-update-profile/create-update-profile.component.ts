@@ -1,7 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { UserProfilesService, UserProfile } from '../../services/user-profiles.service';
+import { AuthService } from '../../services/auth.service'; // Assuming you have this service for auth
+import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
+import { LoginResponse } from '../../services/auth.service';
 @Component({
   selector: 'app-create-update-profile',
   standalone: true,
@@ -12,7 +15,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
         <h2>Profile</h2>
       </div>
       
-      <div class="profile-section">
+      <div class="profile-section" *ngIf="userProfile">
         <div class="user-info">
           <div class="avatar-section">
             <div class="avatar">
@@ -24,63 +27,31 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
           <div class="form-content">
             <div class="form-group">
               <label for="fullName">Full Name</label>
-              <input type="text" id="fullName" placeholder="Enter your full name">
+              <input type="text" [(ngModel)]="userProfile.full_name" id="fullName" placeholder="Enter your full name">
             </div>
             
-            <div class="form-group">
-              <label for="email">Email</label>
-              <input type="email" id="email" placeholder="Enter your email">
-            </div>
+           
             
             <div class="form-group">
               <label for="phone">Phone</label>
-              <input type="tel" id="phone" placeholder="Enter your phone number">
+              <input type="tel" [(ngModel)]="userProfile.phone" id="phone" placeholder="Enter your phone number">
             </div>
             
             <div class="form-group">
               <label for="location">Location</label>
-              <input type="text" id="location" placeholder="City, Country">
+              <input type="text" [(ngModel)]="userProfile.location" id="location" placeholder="City, Country">
             </div>
           </div>
         </div>
-        
-        <div class="section-divider"></div>
-        
-        <div class="experience-section">
-          <h3>Add Experience</h3>
-          <div class="form-group">
-            <label for="company">Company</label>
-            <input type="text" id="company" placeholder="Company name">
-          </div>
-          
-          <div class="form-group">
-            <label for="position">Position</label>
-            <input type="text" id="position" placeholder="Your job title">
-          </div>
-          
-          <div class="date-range">
-            <div class="form-group">
-              <label for="startDate">Start Date</label>
-              <input type="text" id="startDate" placeholder="MM/YYYY">
-            </div>
-            
-            <div class="form-group">
-              <label for="endDate">End Date</label>
-              <input type="text" id="endDate" placeholder="MM/YYYY or Present">
-            </div>
-          </div>
-          
-          <div class="form-group">
-            <label for="description">Description</label>
-            <textarea id="description" rows="3" placeholder="Describe your responsibilities"></textarea>
-          </div>
-          
-          <button class="add-button">Add Experience</button>
-        </div>
-        
+
         <div class="actions">
-          <button class="save-button">Save Profile</button>
+          <button class="save-button" (click)="saveProfile()">Save Profile</button>
+          <button class="delete-button" (click)="deleteProfile()">Delete Profile</button>
         </div>
+      </div>
+
+      <div *ngIf="!userProfile">
+        <p>Loading user profile...</p>
       </div>
     </div>
   `,
@@ -151,33 +122,21 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
       font-weight: 500;
     }
     
-    input, textarea {
+    input {
       width: 100%;
       padding: 10px;
       border: 1px solid #ccc;
       border-radius: 4px;
     }
     
-    .section-divider {
-      height: 1px;
-      background-color: #eee;
-      margin: 10px 0;
-    }
-    
-    .experience-section {
-      margin-top: 10px;
-    }
-    
-    .date-range {
+    .actions {
       display: flex;
-      gap: 15px;
+      justify-content: flex-end;
+      gap: 20px;
+      margin-top: 20px;
     }
     
-    .date-range .form-group {
-      flex: 1;
-    }
-    
-    .add-button, .save-button {
+    .save-button, .delete-button {
       background-color: #d6a4a4;
       color: white;
       padding: 8px 16px;
@@ -185,13 +144,80 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
       border-radius: 4px;
       cursor: pointer;
     }
-    
-    .actions {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: 20px;
-    }
   `]
 })
-export class CreateUpdateProfileComponent {}
+export class CreateUpdateProfileComponent implements OnInit {
+  userProfile: UserProfile | null = null;
 
+  constructor(
+    private userProfilesService: UserProfilesService,
+    private authService: AuthService, // Assuming you have an auth service
+    private route: ActivatedRoute
+  ) { }
+
+  ngOnInit(): void {
+    console.log('[Component Debug] Component initialized');
+    this.authService.inspectCookies();
+    
+    this.authService.user$.subscribe(user => {
+      console.log('[Component Debug] User state changed:', user ? `User ID: ${user.id}` : 'No user');
+      
+      if (user) {
+        console.log('[Component Debug] Loading profile for user:', user.id);
+        this.loadUserProfile(user.id);
+      } else {
+        console.log('[Component Debug] No user in state, checking auth status...');
+        this.authService.checkAuthStatus().subscribe({
+          next: (user) => {
+            if (user) {
+              console.log('[Component Debug] Auth check successful, loading profile for:', user.id);
+              this.loadUserProfile(user.id);
+            } else {
+              console.error('[Component Debug] Auth check returned no user');
+            }
+          },
+          error: (err) => {
+            console.error('[Component Debug] Auth check failed with error:', err.message);
+          }
+        });
+      }
+    });
+  }
+  
+  // You might want to add logging to the load profile method too
+  loadUserProfile(userId: string | number): void {
+    console.log('[Component Debug] Starting profile load for:', userId);
+    if (userId) {
+      this.userProfilesService.getUserProfileByUserId(String(userId)).subscribe(
+        (profile) => this.userProfile = profile,
+        (error) => console.error('Error fetching user profile', error)
+      );
+    } else {
+      console.error('No logged-in user ID found');
+    }
+  }
+
+  saveProfile(): void {
+    if (this.userProfile) {
+      this.userProfilesService.updateUserProfile(this.userProfile.id, this.userProfile).subscribe(
+        (updatedProfile) => {
+          this.userProfile = updatedProfile; // Update the UI with the new profile data
+          console.log('Profile saved successfully');
+        },
+        (error) => console.error('Error saving profile', error)
+      );
+    }
+  }
+
+  deleteProfile(): void {
+    if (this.userProfile) {
+      this.userProfilesService.deleteUserProfile(this.userProfile.id).subscribe(
+        () => {
+          this.userProfile = null; // Clear the profile after deletion
+          console.log('Profile deleted successfully');
+        },
+        (error) => console.error('Error deleting profile', error)
+      );
+    }
+  }
+}
