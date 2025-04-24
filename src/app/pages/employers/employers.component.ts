@@ -34,45 +34,14 @@ import { RouterModule } from '@angular/router';
             <p>Coordinate and manage interview schedules efficiently</p>
           </a>
         </div>
-
-        <div class="contact-form-container">
-          <h3>Contact our sales team</h3>
-          <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
-            <div class="form-group">
-              <label for="name">Name</label>
-              <input 
-                type="text" 
-                id="name" 
-                formControlName="name" 
-                class="form-control"
-                placeholder="Your name">
-            </div>
-
-            <div class="form-group">
-              <label for="email">Email</label>
-              <input 
-                type="email" 
-                id="email" 
-                formControlName="email" 
-                class="form-control"
-                placeholder="Your email">
-            </div>
-
-            <div class="form-group">
-              <label for="company">Company</label>
-              <input 
-                type="text" 
-                id="company" 
-                formControlName="company" 
-                class="form-control"
-                placeholder="Your company">
-            </div>
-
-            <button type="submit" class="contact-btn">Send</button>
-          </form>
+          <a class="feature-card" [routerLink]="['/post-job']">
+            <h3>Post a job</h3>
+            <p>Post a job to find the best match with skills</p>
+          </a>
         </div>
+       
       </div>
-    </div>
+    
   `,
   styles: [`
     .employers-container {

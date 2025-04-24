@@ -87,7 +87,9 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
           
           <div class="job-actions">
             <span class="posted-date">Posted: {{ formatDate(job.created_at) }}</span>
-            <a [routerLink]="['/jobs', job.id]" class="apply-button">View Details</a>
+            <a [routerLink]="['/post-find-job', job.id]" class="apply-button">View Details</a>
+            <a [routerLink]="['/jobs', job.id]" class="apply-button">Apply</a>
+
           </div>
         </div>
       </div>

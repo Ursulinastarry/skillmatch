@@ -15,17 +15,20 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor() {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+    // Clone request to include credentials
+    const authReq = request.clone({ withCredentials: true });
+  
     // Log outgoing requests
-    if (request.url.includes('/users/')) {
+    if (authReq.url.includes('/users/')) {
       console.log('[Auth Debug] Outgoing request:', {
-        url: request.url,
-        method: request.method,
-        withCredentials: request.withCredentials,
+        url: authReq.url,
+        method: authReq.method,
+        withCredentials: authReq.withCredentials,
         timestamp: new Date().toISOString()
       });
     }
-    
-    return next.handle(request).pipe(
+  
+    return next.handle(authReq).pipe(
       tap({
         next: (event) => {
           if (event instanceof HttpResponse && event.url?.includes('/users/')) {
@@ -49,4 +52,5 @@ export class AuthInterceptor implements HttpInterceptor {
       })
     );
   }
+  
 }

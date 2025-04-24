@@ -19,7 +19,9 @@ export interface UserProfile {
 })
 export class UserProfilesService {
   private apiUrl = `${environment.apiUrl}/profiles`;
-
+  private httpOptions = {
+    withCredentials: true
+};
   constructor(private http: HttpClient) { }
 
   getUserProfiles(): Observable<UserProfile[]> {

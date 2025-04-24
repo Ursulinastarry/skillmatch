@@ -21,7 +21,11 @@ export interface Job {
   providedIn: 'root'
 })
 export class JobsService {
-  private apiUrl = `${environment.apiUrl}/jobs`;
+private apiUrl = `${environment.apiUrl}/jobs`;
+
+private httpOptions = {
+    withCredentials: true
+};
 
   constructor(private http: HttpClient) { }
 

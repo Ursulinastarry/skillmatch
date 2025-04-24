@@ -17,7 +17,10 @@ export interface LoginResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://100.26.102.129:80'; // Adjust to your backend
+  private apiUrl = '/api'; 
+  private httpOptions = {
+    withCredentials: true
+};// Adjust to your backend
   private lastAuthCheck: number = 0; // Track last authentication check timestamp
 
   // User information subject
@@ -68,7 +71,7 @@ export class AuthService {
         return this.handleError(error);
       }),
       // Extract just the body to maintain backward compatibility
-      switchMap(response => of(response.body))
+      
     );
   }
   
@@ -191,8 +194,4 @@ export class AuthService {
     employer: 2,
     jobseeker: 3
   };
-}
-
-function switchMap(arg0: (response: any) => any): import("rxjs").OperatorFunction<import("@angular/common/http").HttpResponse<any>, any> {
-  throw new Error('Function not implemented.');
 }

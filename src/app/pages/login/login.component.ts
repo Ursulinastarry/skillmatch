@@ -246,6 +246,7 @@ export class LoginComponent {
   loginForm: FormGroup;
   submitted = false;
   loginError = '';
+  isLoading = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -266,7 +267,8 @@ export class LoginComponent {
   
   onSubmit() {
     this.submitted = true;
-    console.log('Form submitted:', this.loginForm.value); // Log form values when the form is submitted
+    this.loginError = '';
+    console.log('Form submitted:', this.loginForm.value);
     
     if (this.loginForm.invalid) {
       console.log('Form is invalid');
@@ -274,51 +276,58 @@ export class LoginComponent {
     }
 
     const formValue = this.loginForm.value;
-    const roleId = this.authService.getRoleIdByName(formValue.userRole); // role name → role id
+    const roleId = this.authService.getRoleIdByName(formValue.userRole);
 
     console.log('Role ID retrieved for user role:', formValue.userRole, 'Role ID:', roleId);
 
-    const loginPayload = {
-      email: formValue.email,
-      password: formValue.password,
-      role_id: roleId
-    };
-
-    console.log('Login payload:', loginPayload); // Log the login payload before making the request
-
+    this.isLoading = true;
+    
+    // Login with HTTP-only cookie approach
     this.authService.login(formValue.email, formValue.password, formValue.userRole).subscribe({
       next: (response) => {
-        const userId = response?.user?.id;
-        const token = response?.accessToken;
+        const body = response.body;
+        const user = body?.user;
       
-        if (!userId || !token) {
-          console.error('Login response missing userId or token', response);
+        if (!user || !user.id) {
+          console.error('Login response missing user information', response);
+          this.loginError = 'Invalid login response. Please try again.';
+          this.isLoading = false;
           return;
         }
       
-       
-      
-        console.log('Login successful ✨');
-      
-        switch (formValue.userRole) {
-          case 'admin':
-            this.router.navigate(['/administrators']);
-            break;
-          case 'jobseeker':
-            this.router.navigate(['/job-seekers']);
-            break;
-          case 'employer':
-            this.router.navigate(['/employers']);
-            break;
-          default:
-            this.router.navigate(['/']);
-            break;
-        }
+        console.log('Login successful ✨', user);
+        
+        // No need to manually store tokens as they're in HTTP-only cookies
+        
+        // Navigate based on user role
+        this.navigateBasedOnRole(formValue.userRole);
+        this.isLoading = false;
       },
       error: (err) => {
-        console.error('Login failed:', err); // Log error when login fails
-        this.loginError = 'Login failed. Please check your credentials and try again.'; // Set error message
+        console.error('Login failed:', err);
+        this.loginError = 'Login failed. Please check your credentials and try again.';
+        this.isLoading = false;
       }
     });
+  }
+  
+  /**
+   * Navigate to appropriate route based on user role
+   */
+  private navigateBasedOnRole(userRole: string): void {
+    switch (userRole) {
+      case 'admin':
+        this.router.navigate(['/administrators']);
+        break;
+      case 'jobseeker':
+        this.router.navigate(['/job-seekers']);
+        break;
+      case 'employer':
+        this.router.navigate(['/employers']);
+        break;
+      default:
+        this.router.navigate(['/']);
+        break;
+    }
   }
 }
