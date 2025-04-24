@@ -1,1 +1,53 @@
-<p>my-jobs works!</p>
+<div class="container">
+    <div class="header">
+      <h2>Job Applicants</h2>
+      <div class="header-filters">
+        <input type="text" class="search-input" placeholder="Search by name..." />
+        <label for="status-filter" class="visually-hidden">Filter by status</label>
+        <select id="status-filter" class="filter-select">
+          <option value="">All Statuses</option>
+          <option value="pending">Pending</option>
+          <option value="reviewed">Reviewed</option>
+          <option value="interviewed">Interviewed</option>
+          <option value="rejected">Rejected</option>
+          <option value="accepted">Accepted</option>
+        </select>
+      </div>
+    </div>
+  
+    <div class="applicants-list">
+      <div class="applicant-item">
+        <div class="applicant-photo">
+          <img src="https://via.placeholder.com/50" alt="Profile" />
+        </div>
+        <div>
+          <div class="applicant-name">Jane Doe</div>
+          <div class="applicant-position">Frontend Developer</div>
+          <div class="applicant-location">Nairobi, Kenya</div>
+        </div>
+        <div class="applicant-stats">
+          <div>
+            <span class="stat-label">Skills:</span>
+            <span class="stat-value">Angular, TypeScript</span>
+          </div>
+          <div>
+            <span class="stat-label">Applied:</span>
+            <span class="stat-value">2025-04-23</span>
+          </div>
+        </div>
+        <div>
+          <span class="applicant-status interview">Interviewed</span>
+        </div>
+        <div class="applicant-actions">
+          <button class="action-btn view">View</button>
+          <button class="action-btn interview">Interview</button>
+          <button class="action-btn reject">Reject</button>
+          <button class="action-btn hire">Hire</button>
+          <button class="action-btn reschedule">Reschedule</button>
+        </div>
+      </div>
+      
+      <!-- Add more .applicant-item blocks as needed -->
+    </div>
+  </div>
+  
